@@ -5,12 +5,14 @@ before_install:
 script:
   - make all
   - ls -ltra
+after_success:
   - git add --force *.pdf index.html
   - git commit -m "adding pdfs `date`"
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
-  keep-history: false
-  on:
-    branch: master
+  - test "$TRAVIS_BRANCH" = "master" && git remote add deploy https://$GITHUB_TOKEN@github.com/seq2class/scribe-notes.git && git push --force deploy master:gh-pages
+# deploy:
+#   provider: pages
+#   skip-cleanup: true
+#   github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+#   keep-history: false
+#   on:
+#     branch: master
