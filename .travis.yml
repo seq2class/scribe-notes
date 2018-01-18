@@ -6,9 +6,10 @@ script:
   - make all
   - ls -ltra
 after_success:
+  - git checkout -b built-pages
   - git add --force *.pdf index.html
   - git commit -m "adding pdfs `date`"
-  - test "$TRAVIS_BRANCH" = "master" && git remote add deploy https://$GITHUB_TOKEN@github.com/seq2class/scribe-notes.git && git push --force deploy master:gh-pages
+  - test "$TRAVIS_BRANCH" = "master" && git remote add deploy https://$GITHUB_TOKEN@github.com/seq2class/scribe-notes.git && git push --force deploy built-pages:gh-pages
 # deploy:
 #   provider: pages
 #   skip-cleanup: true
