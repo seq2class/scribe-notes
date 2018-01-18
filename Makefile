@@ -7,7 +7,7 @@ all: $(Pdfs) index.html
 	latexmk -gg -pdf $<
 
 clean:
-	git clean -xf
+	git clean -fX
 	rm -rf *.pdf index.html
 
 index.html: $(Pdfs)
