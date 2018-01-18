@@ -4,11 +4,13 @@ before_install:
 - sudo apt-get -qq update && sudo apt-get install -y --no-install-recommends texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra dvipng texlive-latex-recommended latexmk
 script:
   - make all
+  - ls -ltra
   - git add --force *.pdf index.html
+  - git commit -m "adding pdfs `date`"
 deploy:
   provider: pages
   skip-cleanup: true
   github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
-  keep-history: true
+  keep-history: false
   on:
     branch: master
