@@ -1,6 +1,8 @@
 Notes=$(wildcard *.tex)
 Pdfs=$(Notes:.tex=.pdf)
 
+.PHONY: all clean
+
 all: $(Pdfs) index.html
 
 %.pdf: %.tex
