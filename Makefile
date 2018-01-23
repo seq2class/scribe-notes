@@ -5,7 +5,7 @@ Pdfs=$(Notes:.tex=.pdf)
 
 all: $(Pdfs) index.html
 
-%.pdf: %.tex
+%.pdf: %.tex seq2class.sty
 	latexmk -gg -pdf $<
 
 clean:
@@ -15,4 +15,5 @@ clean:
 index.html: $(Pdfs)
 	echo "<html><head><title>Scribe notes for Seq2Class EN.601.765</title></head><body><h1>Scribe notes</h1><ol>" > index.html
 	for i in *.pdf ; do echo "<li><a href=\"$$i\">$$i</a></li>" >> index.html; done
-	echo "</ol></body></html>" >> index.html
+	echo "</o><div style='text-align: center; vertical-align: middle; position: fixed; bottom: 50px; width: 100%;'><code>Git commit: `git describe --always --long --dirty --abbrev=12`, Build date: `TZ=America/New_York date`</code></div>" >> index.html
+	echo "</body></html>" >> index.html
