@@ -1,80 +1,202 @@
-%
-% The following macro is used to generate the header.
-%
-\newcommand{\lecture}[4]{
-   \pagestyle{myheadings}
-   \thispagestyle{plain}
-   \newpage
-   \setcounter{lecnum}{#1}
-   \setcounter{page}{1}
-   \noindent
-   \begin{center}
-   \framebox{
-      \vbox{\vspace{2mm}
-    \hbox to 6in { {\bf EN.601.765: MACHINE LEARNING: LINGUISTIC \& SEQUENCE MODELING
-		\hfill Sp 2018} }
-       \vspace{4mm}
-       \hbox to 6.28in { {\Large \hfill Lecture #1: #2  \hfill} }
-       \vspace{2mm}
-       \hbox to 6.28in { {\it Lecturer: #3 \hfill Scribes: #4} }
-      \vspace{2mm}}
-   }
-   \end{center}
-   \markboth{Lecture #1: #2}{Lecture #1: #2}
+% Common macros for JHU's sequence modeling class.
+% To be used with \documentclass{article}.
+% Load \usepackage{todonotes} after this package (optionally with [disable] option).
 
-   %% {\bf Note}: {\it LaTeX template courtesy of UC Berkeley EECS dept.}
+% TODO: Give the package an option to turn todonotes on/off.
+% TODO: Give the package an option to format each section as 1 long
+%     page for screen viewing, with footnotes at the end of the page.
+%     See https://tex.stackexchange.com/questions/19237/automatically-increase-pdf-page-height
 
-   %% {\bf Disclaimer}: {\it These notes have not been subjected to the
-   %% usual scrutiny reserved for formal publications.  They may be distributed
-   %% outside this class only with the permission of the Instructor.}
-   %% \vspace*{4mm}
+% LAYOUT
+\usepackage[margin=1in]{geometry}
+\usepackage{letltxmacro}
+\LetLtxMacro{\oldparagraph}{\paragraph}
+\renewcommand{\paragraph}[1]{\oldparagraph{#1.}}
+%\setlength\emergencystretch{\hsize}  % avoid overfull hboxes
+
+% UTILITY PACKAGES
+\usepackage{xspace}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{wrapfig}
+
+% REFERENCES (HYPERREF, CLEVEREF)
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\usepackage[colorlinks,allcolors=MidnightBlue]{hyperref}
+\usepackage[noabbrev,capitalize]{cleveref} % http://ctan.mackichan.com/macros/latex/contrib/cleveref/cleveref.pdf
+\newcommand{\crefrangeconjunction}{--}
+\crefname{equation}{equation}{equations}   % "equation" is lowercased, overriding capitalize option
+\crefname{footnote}{footnote}{footnotes}   % "footnote" is lowercased, overriding capitalize option
+\crefname{section}{\S}{\S\S}
+\Crefname{section}{\S}{\S\S}    % must define start-of-sentence version explicitly since \S isn't a letter
+\crefformat{section}{#2\S#1#3}  % remove space between section chrbol and the number, and include \S in the hyperlink
+\Crefformat{section}{#2\S#1#3}
+\crefrangeformat{section}{\S\S#3#1#4--#5#2#6}
+\Crefrangeformat{section}{\S\S#3#1#4--#5#2#6}
+
+% TODONOTES
+% \usepackage{todonotes}  % User should load afterwards so they can specify [disable] option
+\makeatletter
+\newcommand*\iftodonotes{\if@todonotes@disabled\expandafter\@secondoftwo\else\expandafter\@firstoftwo\fi}  % defines \iftodonotes{<true>}{<false>}, thanks to https://tex.stackexchange.com/questions/126559/conditional-based-on-packageoption
+\makeatother
+\newcommand{\noindentaftertodo}{\iftodonotes{\noindent}{}}
+% These macros allow optional arguments such as size=\small, bordercolor=red, and so on.
+% Lowercase versions are margin notes and should have space on only one side (since they will vanish when notes are disabled).
+% Capitalized versions are inline paragraphs and should generally be preceded by space (since they eat following space even when notes are disabled).
+\newcommand{\fixme}[2][]{\todo[color=yellow,size=\scriptsize,fancyline,caption={},#1]{#2}{}}
+\newcommand{\note}[4][]{\todo[author=#2,color=#3,size=\scriptsize,fancyline,caption={},#1]{#4}{}} % default note settings, used by macros below.
+\newcommand{\jason}[2][]{\note[#1]{jason}{green!40}{#2}}
+\newcommand{\ryan}[2][]{\note[#1]{ryan}{orange!40}{#2}}
+\newcommand{\mfl}[2][]{\note[#1]{mfl}{magenta!40}{#2}}
+\newcommand{\scribe}[2][]{\note[#1]{mfl}{goldenrod!40}{#2}}
+\newcommand{\notewho}[3][]{\note[#1]{#2}{blue!40}{#3}}     % for other commenters: specify author name in first required arg
+\newcommand{\Fixme}[2][]{\fixme[inline,#1]{#2}\noindentaftertodo\ignorespaces}
+\newcommand{\Notewho}[3][]{\notewho[inline,#1]{#2}{#3}\noindentaftertodo\ignorespaces}
+\newcommand{\Jason}[2][]{\jason[inline,#1]{#2}\noindentaftertodo\ignorespaces}
+\newcommand{\Ryan}[2][]{\ryan[inline,#1]{#2}\noindentaftertodo\ignorespaces}
+\newcommand{\Mfl}[2][]{\mfl[inline,#1]{#2}\noindentaftertodo\ignorespaces}
+\newcommand{\Scribe}[2][]{\scribe[inline,#1]{#2}\noindentaftertodo\ignorespaces}
+
+
+% TEXT FONTS
+\usepackage[utf8]{inputenc} % allow unicode characters in input
+\usepackage[T1]{fontenc}  %  https://tex.stackexchange.com/questions/664/why-should-i-use-usepackaget1fontenc
+\usepackage{microtype} % better typesetting
+\usepackage{lmodern}   % LaTeX Modern T1 fonts - improved and more complete version of Computer Modern
+\usepackage{courier}   % redefines \texttt
+\usepackage[normalem]{ulem}  % defines \ul command for underlining
+
+% DEFINITIONS
+\usepackage{soul}
+\definecolor{lightblue}{rgb}{.70,.92,.92}
+\newcommand{\defn}[1]{{\sethlcolor{lightblue}\hl{\mbox{#1}}}\index{#1}}   % definitions.  mbox prevents linebreak/hyphenation in the middle of the term.
+\usepackage{makeidx}
+\makeindex
+
+% MATH FONTS AND FONT MACROS
+\usepackage{amsmath}   % ftp://ftp.ams.org/ams/doc/amsmath/amsldoc.pdf
+\usepackage{mathtools} % e.g., \smashoperator[lr]{\sum_{\text{very wide subscript}}}
+\usepackage{amssymb}   % http://www.tex.ac.uk/tex-archive/info/symbols/comprehensive/symbols-a4.pdf
+\usepackage{amsfonts}
+\usepackage{latexsym}  % needed?
+\usepackage{amsbsy}    % needed?
+
+\usepackage[utopia]{mathdesign}   % includes upright lowercase Greek letters (as suggested in isomath documentation).
+\usepackage[OMLmathrm,OMLmathbf]{isomath}
+% TODO: Consider buying MTPro2 fonts.
+\renewcommand{\vec}{\vectorsym}  % vectors
+\newcommand{\mat}[1]{\matrixsym{#1}}    % matrices
+\newcommand{\chr}[1]{\mathrm{#1}}       % "characters" (technically, symbols)
+\newcommand{\str}[1]{\mathbf{#1}}       % strings
+\newcommand{\lit}[1]{\texttt{#1}}       % literal symbols or strings
+
+% OTHER MATH IMPROVEMENTS
+\newcommand{\overbar}[1]{\mkern
+  1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu} % midlength overbar, from https://tex.stackexchange.com/questions/22100/the-bar-and-overline-commands
+\renewcommand{\Pr}{\mathop{\rm Pr}\nolimits}  % fix problem where subscripts are rendered as limits in math mode
+
+% COMMON MATH MACROS
+\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\mean}{mean}
+\newcommand{\E}[2][]{\mathop{\mathbb{E}}_{{#1}}[#2]}   % expectation
+\newcommand{\defeq}{\mathrel{\stackrel{\mbox{\tiny def}}{=}}} % unicode U+225D
+\newcommand{\defpropto}{\mathrel{\stackrel{\mbox{\tiny def}}{\propto}}}
+\newcommand{\Real}{{\mathbb R}}
+\newcommand{\Nat}{{\mathbb N}}
+\newcommand{\angles}[1]{\langle #1 \rangle}
+\newcommand{\Norm}[1]{\left|\left|#1\right|\right|}  % sometimes need to put \, at start or end of argument
+\newcommand{\psup}[1]{^{(#1)}}   % parenthesized superscript
+\renewcommand{\th}{\textsuperscript{th}\xspace}  % for "4th" or "nth"; need to define this late
+
+% PSEUDOCODE
+\usepackage[noend]{algpseudocode}  % works within algorithmicx
+\MakeRobust{\Call}   % fix algpseudocode bug with nested \Call commands
+\renewcommand{\algorithmicindent}{9pt}
+% hide "then" in if-statement and "do" on while-statement..
+\renewcommand\algorithmicdo{:}
+\renewcommand\algorithmicthen{:}
+% better comments
+\algrenewcommand{\algorithmiccomment}[1]{\hfill \rightcomment{#1}}  % redefines \Comment (uses \rightcomment above)
+\usepackage{calc}
+\algnewcommand{\LineComment}[1]{\State \rightcomment{#1}}   % whole-line comment
+\algnewcommand{\LinesComment}[1]{\State \rightcomment{\parbox[t]{\linewidth-\leftmargin-\widthof{\(\triangleright\) }}{#1}}\smallskip} % multi-line comment
+\newcommand{\pluseq}{\mathrel{+\!\!=}}
+
+% TIKZ
+
+% SEQ2CLASS CONTENT MACROS
+\newcommand{\bos}{\textsc{bos}\xspace}
+\newcommand{\eos}{\textsc{eos}\xspace}
+
+\newcommand{\cx}{\chr{x}}
+\newcommand{\cy}{\chr{y}}
+\newcommand{\co}{{\chr{o}}}
+\newcommand{\cv}{{\chr{v}}}
+\newcommand{\ca}{{\chr{a}}}
+\newcommand{\cpi}{\chr{\pi}}
+
+\newcommand{\sx}{\str{x}}
+\newcommand{\sy}{\str{y}}
+\renewcommand{\so}{{\str{o}}}
+\newcommand{\sv}{{\str{v}}}
+\newcommand{\sa}{{\str{a}}}
+\newcommand{\spi}{\str{\pi}}
+
+\newcommand{\X}{\mathcal{X}}
+\newcommand{\Y}{\mathcal{Y}}
+\renewcommand{\O}{\mathcal{O}}
+\newcommand{\V}{\mathcal{V}}
+\newcommand{\A}{\mathcal{A}}
+
+\newcommand{\XX}{\boldsymbol{\X}}
+\newcommand{\YY}{\boldsymbol{\Y}}
+\newcommand{\OO}{\boldsymbol{\O}}
+\newcommand{\VV}{\boldsymbol{\V}}
+\renewcommand{\AA}{\boldsymbol{\A}}
+
+\newcommand{\vs}{{\vec{s}}}
+\newcommand{\vsbar}{{\bar{\vs}}}
+\newcommand{\vtheta}{\vec{\theta}}
+\newcommand{\vphi}{\vec{\phi}}
+
+\newcommand{\phat}{\hat{p}}
+\newcommand{\pstar}{p^*}
+\newcommand{\ptilde}{\tilde{p}}
+\newcommand{\ptheta}{p_\vtheta}
+\newcommand{\gtheta}{g_\vtheta}
+\newcommand{\Gtheta}{G_\vtheta}
+\newcommand{\qphi}{q_\vphi}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\Q}{\mathcal{Q}}
+
+\newcommand{\D}{\mathcal{D}}
+
+% CODE LISTING
+\usepackage{listings}
+
+\lstset{
+  basicstyle={\ttfamily},
+  frame=l,
+  xleftmargin={0.75cm},
+  numbers=left,
+  stepnumber=1,
+  firstnumber=1,
+  numberfirstline=true,
+  tabsize=2,
+  showtabs=false,
+  showspaces=false,
+  showstringspaces=false,
+  extendedchars=true,
+  breaklines=true,
+  escapeinside={@}{@},
+  firstnumber=last,
+  language=Python,
 }
 
+\lstnewenvironment{bashex}{\lstset{language=Bash,escapeinside={@@}{@}}}{}
+\lstnewenvironment{pythonex}{}{}
 
-
-%
-% The following commands set up the lecnum (lecture number)
-% counter and make various numbering schemes work relative
-% to the lecture number.
-%
-\newcounter{lecnum}
-\renewcommand{\thepage}{\thelecnum-\arabic{page}}
-\renewcommand{\thesection}{\thelecnum.\arabic{section}}
-\renewcommand{\theequation}{\thelecnum.\arabic{equation}}
-\renewcommand{\thefigure}{\thelecnum.\arabic{figure}}
-\renewcommand{\thetable}{\thelecnum.\arabic{table}}
-
-%
-% Convention for citations is authors' initials followed by the year.
-% For example, to cite a paper by Leighton and Maggs you would type
-% \cite{LM89}, and to cite a paper by Strassen you would type \cite{S69}.
-% (To avoid bibliography problems, for now we redefine the \cite command.)
-% Also commands that create a suitable format for the reference list.
-\renewcommand{\cite}[1]{[#1]}
-\def\beginrefs{\begin{list}%
-        {[\arabic{equation}]}{\usecounter{equation}
-         \setlength{\leftmargin}{2.0truecm}\setlength{\labelsep}{0.4truecm}%
-         \setlength{\labelwidth}{1.6truecm}}}
-\def\endrefs{\end{list}}
-\def\bibentry#1{\item[\hbox{[#1]}]}
-
-%Use this command for a figure; it puts a figure in wherever you want it.
-%usage: \fig{NUMBER}{SPACE-IN-INCHES}{CAPTION}
-\newcommand{\fig}[3]{
-			\vspace{#2}
-			\begin{center}
-			Figure \thelecnum.#1:~#3
-			\end{center}
-	}
-% Use these for theorems, lemmas, proofs, etc.
-\newtheorem{theorem}{Theorem}[lecnum]
-\newtheorem{lemma}[theorem]{Lemma}
-\newtheorem{proposition}[theorem]{Proposition}
-\newtheorem{claim}[theorem]{Claim}
-\newtheorem{corollary}[theorem]{Corollary}
-\newtheorem{definition}[theorem]{Definition}
-\newenvironment{proof}{{\bf Proof:}}{\hfill\rule{2mm}{2mm}}
-
-% **** IF YOU WANT TO DEFINE ADDITIONAL MACROS FOR YOURSELF, PUT THEM HERE:
-
-\newcommand\E{\mathbb{E}}
+% ASSIGNMENT MACRO
+\newcounter{ProblemCounter}
+\newcommand{\problem}[2][]{\addtocounter{ProblemCounter}{1}\it \textbf{[Task \arabic{ProblemCounter}: #2]}}
