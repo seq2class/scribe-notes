@@ -13,12 +13,13 @@
 \LetLtxMacro{\oldparagraph}{\paragraph}
 \renewcommand{\paragraph}[1]{\oldparagraph{#1.}}
 %\setlength\emergencystretch{\hsize}  % avoid overfull hboxes
-
-% UTILITY PACKAGES
-\usepackage{xspace}
-\usepackage{enumitem}
 \usepackage{graphicx}
 \usepackage{wrapfig}
+\usepackage{enumitem}
+
+% UTILITY PACKAGES
+\usepackage{xifthen}
+\usepackage{xspace}
 
 % REFERENCES (HYPERREF, CLEVEREF)
 \usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
@@ -57,7 +58,6 @@
 \newcommand{\Mfl}[2][]{\mfl[inline,#1]{#2}\noindentaftertodo\ignorespaces}
 \newcommand{\Scribe}[2][]{\scribe[inline,#1]{#2}\noindentaftertodo\ignorespaces}
 
-
 % TEXT FONTS
 \usepackage[utf8]{inputenc} % allow unicode characters in input
 \usepackage[T1]{fontenc}  %  https://tex.stackexchange.com/questions/664/why-should-i-use-usepackaget1fontenc
@@ -69,7 +69,14 @@
 % DEFINITIONS
 \usepackage{soul}
 \definecolor{lightblue}{rgb}{.70,.92,.92}
-\newcommand{\defn}[1]{{\sethlcolor{lightblue}\hl{\mbox{#1}}}\index{#1}}   % definitions.  mbox prevents linebreak/hyphenation in the middle of the term.
+\newcommand{\defn}[2][]{%   indexed definition: optional argument is an abbreviation or acronym
+     {\sethlcolor{lightblue}%
+       \hl{\mbox{#2}}\index{#2}% mbox prevents line break within term
+       \ifthenelse{\isempty{#1}}
+         {}%
+         { (\hl{\mbox{#1}})\index{#1|see {#2}}}% add parenthesized abbrev and index that too
+     }%
+}
 \usepackage{makeidx}
 \makeindex
 
@@ -197,6 +204,8 @@
 \lstnewenvironment{bashex}{\lstset{language=Bash,escapeinside={@@}{@}}}{}
 \lstnewenvironment{pythonex}{}{}
 
-% ASSIGNMENT MACRO
-\newcounter{ProblemCounter}
-\newcommand{\problem}[2][]{\addtocounter{ProblemCounter}{1}\it \textbf{[Task \arabic{ProblemCounter}: #2]}}
+% RUNNING QUESTIONS
+% TODO: Consider different formatting, as in
+%    http://latex.org/forum/viewtopic.php?t=10825
+%    https://tex.stackexchange.com/questions/283578/how-to-produce-theorems-in-which-the-color-of-heading-and-body-of-the-theorem-my
+\newtheorem{question}{Question}[section]
