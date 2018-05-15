@@ -67,6 +67,7 @@
 \usepackage[normalem]{ulem}  % defines \ul command for underlining
 
 % DEFINITIONS
+% !!! TODO: instead of optional arg to \defn, make \defn and \altdefn, where \altdefn is indexed as "see" for the most recent \defn (replaceable with an optional argument).
 \usepackage{soul}
 \definecolor{lightblue}{rgb}{.70,.92,.92}
 \newcommand{\defn}[2][]{%   indexed definition: optional argument is an abbreviation or acronym
@@ -107,6 +108,7 @@
 \DeclareMathOperator*{\argmax}{argmax}
 \DeclareMathOperator*{\mean}{mean}
 \newcommand{\E}[2][]{\mathop{\mathbb{E}}_{{#1}}[#2]}   % expectation
+\newcommand{\KL}[2]{\mathrm{KL}(#1 \mid\mid #2)}       % KL divergence
 \newcommand{\defeq}{\mathrel{\stackrel{\mbox{\tiny def}}{=}}} % unicode U+225D
 \newcommand{\defpropto}{\mathrel{\stackrel{\mbox{\tiny def}}{\propto}}}
 \newcommand{\Real}{{\mathbb R}}
@@ -114,6 +116,8 @@
 \newcommand{\angles}[1]{\langle #1 \rangle}
 \newcommand{\Norm}[1]{\left|\left|#1\right|\right|}  % sometimes need to put \, at start or end of argument
 \newcommand{\psup}[1]{^{(#1)}}   % parenthesized superscript
+\newcommand{\bmin}{\mathbin{\,\min\,}}  % binary infix \min operator
+\newcommand{\bmax}{\mathbin{\,\max\,}}  % binary infix \max operator
 \renewcommand{\th}{\textsuperscript{th}\xspace}  % for "4th" or "nth"; need to define this late
 
 % PSEUDOCODE
@@ -131,6 +135,10 @@
 \newcommand{\pluseq}{\mathrel{+\!\!=}}
 
 % TIKZ
+\usepackage{tikz}
+\usetikzlibrary{bayesnet}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=0.5pt] (char) {#1};}} % https://tex.stackexchange.com/questions/7032/good-way-to-make-textcircled-numbers
 
 % SEQ2CLASS CONTENT MACROS
 \newcommand{\bos}{\textsc{bos}\xspace}
@@ -143,12 +151,24 @@
 \newcommand{\ca}{{\chr{a}}}
 \newcommand{\cpi}{\chr{\pi}}
 
+\newcommand{\cX}{\chr{X}}
+\newcommand{\cY}{\chr{Y}}
+\newcommand{\cO}{{\chr{O}}}
+\newcommand{\cV}{{\chr{V}}}
+\newcommand{\cA}{{\chr{A}}}
+
 \newcommand{\xx}{\str{x}}
 \newcommand{\yy}{\str{y}}
 \newcommand{\oo}{{\str{o}}}
 \newcommand{\vv}{{\str{v}}}
 \renewcommand{\aa}{{\str{a}}}
 \newcommand{\pipi}{\str{\pi}}
+
+\newcommand{\xX}{\str{X}}
+\newcommand{\yY}{\str{Y}}
+\newcommand{\oO}{{\str{O}}}
+\newcommand{\vV}{{\str{V}}}
+\newcommand{\aA}{{\str{A}}}
 
 \newcommand{\X}{\mathcal{X}}
 \newcommand{\Y}{\mathcal{Y}}
@@ -169,15 +189,20 @@
 
 \newcommand{\phat}{\hat{p}}
 \newcommand{\pstar}{p^*}
-\newcommand{\ptilde}{\tilde{p}}
 \newcommand{\ptheta}{p_\vtheta}
+\newcommand{\rtilde}{\tilde{r}}
+\newcommand{\ptilde}{\tilde{p}}
 \newcommand{\gtheta}{g_\vtheta}
 \newcommand{\Gtheta}{G_\vtheta}
 \newcommand{\qphi}{q_\vphi}
 \renewcommand{\P}{\mathcal{P}}
 \newcommand{\Q}{\mathcal{Q}}
 
-\newcommand{\D}{\mathcal{D}}
+\newcommand{\D}{\mathcal{D}}  % dataset
+
+\newcommand{\W}{\mathcal{W}}  % weights
+\newcommand{\semizero}{\circled{0}}
+\newcommand{\semione}{\circled{1}}
 
 % CODE LISTING
 \usepackage{listings}
